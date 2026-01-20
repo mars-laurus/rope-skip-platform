@@ -1,0 +1,2442 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>全国跳绳赛事平台</title>
+    
+    <!-- 样式库 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --glass-bg: rgba(255, 255, 255, 0.88);
+            --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.18);
+            --border-radius-md: 20px;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+            touch-action: manipulation;
+        }
+        
+        .navbar {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+        }
+        
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 1.8rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .nav-link {
+            color: #555 !important;
+            font-weight: 600;
+            padding: 10px 20px !important;
+            border-radius: 12px;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary-color) !important;
+            background: rgba(102, 126, 234, 0.1);
+        }
+        
+        .page-content {
+            padding-top: 80px;
+            min-height: calc(100vh - 73px);
+        }
+        
+        .section-title {
+            font-weight: 900;
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 4px;
+            background: var(--primary-gradient);
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+        
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            border-radius: var(--border-radius-md);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 30px;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.5s ease;
+        }
+        
+        .glass-card:hover {
+            transform: translateY(-8px);
+        }
+        
+        .feature-card {
+            text-align: center;
+            padding: 40px 30px;
+            border-radius: var(--border-radius-md);
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: var(--shadow-lg);
+            height: 100%;
+        }
+        
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--primary-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            color: white;
+            font-size: 2rem;
+        }
+        
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-weight: 600;
+            min-height: 44px;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
+            color: white;
+            border: none;
+            min-height: 44px;
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+            border: none;
+            min-height: 44px;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+            border: none;
+            min-height: 44px;
+        }
+        
+        .admin-badge {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .test-badge {
+            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+            color: #333;
+            font-weight: 600;
+        }
+        
+        footer {
+            background: linear-gradient(135deg, #1a2980 0%, #26d0ce 100%);
+            color: white;
+            padding: 60px 0 30px;
+            margin-top: 60px;
+        }
+        
+        /* 登录失败样式 */
+        .login-failed-shake {
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        .login-attempts-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            background: #dc3545;
+            color: white;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 8px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .glass-card {
+                padding: 20px;
+            }
+            
+            .nav-link {
+                padding: 12px 16px !important;
+            }
+            
+            .modal-dialog {
+                margin: 10px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .btn {
+                padding: 14px 20px;
+            }
+        }
+        
+        /* 数据表格 */
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .data-table thead th {
+            background: var(--primary-gradient);
+            color: white;
+            font-weight: 600;
+            padding: 15px 20px;
+            border: none;
+        }
+        
+        .data-table tbody td {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .data-table tbody tr:hover {
+            background-color: rgba(102, 126, 234, 0.05);
+        }
+        
+        /* 新增样式 */
+        .video-preview {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #f8f9fa;
+            transition: transform 0.3s ease;
+        }
+        
+        .video-preview:hover {
+            transform: translateY(-5px);
+        }
+        
+        .video-thumbnail {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .excellent-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+            color: #333;
+            font-weight: 700;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+        
+        .ranking-controls .btn-group-sm .btn {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
+        
+        #excellentVideosTable .btn-group-sm .btn {
+            padding: 0.2rem 0.4rem;
+            font-size: 0.7rem;
+        }
+        
+        input[type="number"].ranking-score {
+            width: 80px;
+            display: inline-block;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- 通知容器 -->
+        <div class="notification-container" id="notificationContainer" style="position: fixed; top: 80px; right: 20px; z-index: 9998;"></div>
+
+        <!-- 导航栏 -->
+        <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+            <div class="container">
+                <a class="navbar-brand" href="#home">
+                    <i class="fas fa-dumbbell"></i>
+                    跳绳赛事平台
+                </a>
+                
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item"><a class="nav-link" href="#home"><i class="fas fa-home me-2"></i>首页</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#enroll"><i class="fas fa-user-plus me-2"></i>参赛报名</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#upload"><i class="fas fa-video me-2"></i>视频上传</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#excellent"><i class="fas fa-trophy me-2"></i>优秀展示</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#rank"><i class="fas fa-chart-line me-2"></i>积分榜</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#personal"><i class="fas fa-user-circle me-2"></i>个人平台</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#dashboard"><i class="fas fa-chart-pie me-2"></i>数据看板</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#admin" id="adminLink" style="display: none;"><i class="fas fa-shield-alt me-2"></i>管理员</a></li>
+                    </ul>
+                    
+                    <div class="d-flex align-items-center" id="userControls">
+                        <div id="authButtons">
+                            <button class="btn btn-outline-primary me-2" onclick="showLoginModal()">
+                                <i class="fas fa-sign-in-alt me-2"></i>登录
+                            </button>
+                            <button class="btn btn-primary" onclick="showRegisterModal()">
+                                <i class="fas fa-user-plus me-2"></i>注册
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- 页面容器 -->
+        <div class="page-wrapper" id="pageWrapper">
+            <!-- 内容动态加载 -->
+        </div>
+    </div>
+
+    <!-- 第三方库 -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // ===================== 工具函数 =====================
+        // 修复的密码哈希函数
+        function hashPassword(password) {
+            if (!password) return '';
+            
+            // 改进的简单哈希算法
+            let hash = 5381;
+            for (let i = 0; i < password.length; i++) {
+                hash = ((hash << 5) + hash) + password.charCodeAt(i);
+            }
+            return Math.abs(hash).toString(16);
+        }
+
+        // 显示通知
+        function showNotification(message, type = 'info') {
+            const container = document.getElementById('notificationContainer');
+            if (!container) return;
+            
+            const alertClass = {
+                'success': 'alert-success',
+                'error': 'alert-danger',
+                'warning': 'alert-warning',
+                'info': 'alert-info'
+            }[type] || 'alert-info';
+            
+            const icon = {
+                'success': 'fa-check-circle',
+                'error': 'fa-exclamation-circle',
+                'warning': 'fa-exclamation-triangle',
+                'info': 'fa-info-circle'
+            }[type] || 'fa-info-circle';
+            
+            const alertId = 'alert-' + Date.now();
+            const alertHTML = `
+                <div id="${alertId}" class="alert ${alertClass} alert-dismissible fade show" role="alert">
+                    <i class="fas ${icon} me-2"></i>
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            
+            container.insertAdjacentHTML('afterbegin', alertHTML);
+            
+            // 5秒后自动移除
+            setTimeout(() => {
+                const alert = document.getElementById(alertId);
+                if (alert) {
+                    alert.classList.remove('show');
+                    setTimeout(() => alert.remove(), 300);
+                }
+            }, 5000);
+        }
+
+        // 显示加载状态
+        function showLoading(show = true, message = '处理中...') {
+            if (show) {
+                const loadingHTML = `
+                    <div id="globalLoading" class="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center" style="background: rgba(255,255,255,0.8); z-index: 9999;">
+                        <div class="text-center">
+                            <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;"></div>
+                            <p class="text-primary fw-bold">${message}</p>
+                        </div>
+                    </div>
+                `;
+                document.body.insertAdjacentHTML('beforeend', loadingHTML);
+            } else {
+                const loading = document.getElementById('globalLoading');
+                if (loading) loading.remove();
+            }
+        }
+
+        // ===================== 数据存储 =====================
+        const DataStore = {
+            users: [],
+            enrollments: [],
+            videos: [],
+            rankings: [],
+            
+            init() {
+                console.log('初始化数据存储...');
+                
+                // 尝试加载本地存储的数据
+                this.loadFromLocalStorage();
+                
+                // 如果数据为空，添加默认数据
+                if (this.users.length === 0) {
+                    this.createDefaultAdmin();
+                }
+                
+                // 如果没有排名数据，生成示例数据
+                if (this.rankings.length === 0) {
+                    this.generateSampleRankings();
+                }
+                
+                console.log('数据初始化完成，用户数:', this.users.length);
+            },
+            
+            loadFromLocalStorage() {
+                try {
+                    const users = localStorage.getItem('ropeSkipUsers');
+                    const enrollments = localStorage.getItem('ropeSkipEnrollments');
+                    const videos = localStorage.getItem('ropeSkipVideos');
+                    const rankings = localStorage.getItem('ropeSkipRankings');
+                    
+                    if (users) this.users = JSON.parse(users);
+                    if (enrollments) this.enrollments = JSON.parse(enrollments);
+                    if (videos) this.videos = JSON.parse(videos);
+                    if (rankings) this.rankings = JSON.parse(rankings);
+                } catch (error) {
+                    console.error('加载本地存储数据失败:', error);
+                }
+            },
+            
+            saveToLocalStorage() {
+                try {
+                    localStorage.setItem('ropeSkipUsers', JSON.stringify(this.users));
+                    localStorage.setItem('ropeSkipEnrollments', JSON.stringify(this.enrollments));
+                    localStorage.setItem('ropeSkipVideos', JSON.stringify(this.videos));
+                    localStorage.setItem('ropeSkipRankings', JSON.stringify(this.rankings));
+                } catch (error) {
+                    console.error('保存到本地存储失败:', error);
+                }
+            },
+            
+            createDefaultAdmin() {
+                // 创建默认管理员账号
+                const adminHash = hashPassword('admin123');
+                
+                const defaultAdmin = {
+                    username: 'admin', 
+                    password: adminHash,
+                    email: 'admin@ropeskips.com', 
+                    role: '超级管理员',
+                    isAdmin: true,
+                    id: 1,
+                    registeredAt: new Date().toISOString()
+                };
+                
+                this.users.push(defaultAdmin);
+                this.saveToLocalStorage();
+                
+                console.log('默认管理员账号已创建');
+            },
+            
+            generateSampleRankings() {
+                // 生成示例排名数据
+                const sampleRankings = [
+                    { id: 1, rank: 1, name: '张三', region: '北京', score: 95.5, events: 3 },
+                    { id: 2, rank: 2, name: '李四', region: '上海', score: 93.2, events: 2 },
+                    { id: 3, rank: 3, name: '王五', region: '广东', score: 91.8, events: 4 },
+                    { id: 4, rank: 4, name: '赵六', region: '浙江', score: 89.7, events: 2 },
+                    { id: 5, rank: 5, name: '孙七', region: '江苏', score: 88.3, events: 3 }
+                ];
+                
+                this.rankings = sampleRankings;
+                this.saveToLocalStorage();
+            },
+            
+            findUser(username, password) {
+                const hashedPassword = hashPassword(password);
+                const user = this.users.find(u => u.username === username && u.password === hashedPassword);
+                
+                if (user) {
+                    return { ...user }; // 返回副本
+                }
+                
+                return null;
+            },
+            
+            addUser(userData) {
+                const newUser = {
+                    id: Date.now(),
+                    username: userData.username,
+                    password: hashPassword(userData.password),
+                    email: userData.email,
+                    role: '普通用户',
+                    isAdmin: false,
+                    registeredAt: new Date().toISOString()
+                };
+                
+                this.users.push(newUser);
+                this.saveToLocalStorage();
+                return newUser;
+            },
+            
+            // 统计数据
+            getStats() {
+                return {
+                    totalUsers: this.users.length,
+                    totalEnrollments: this.enrollments.length,
+                    totalVideos: this.videos.length,
+                    approvedEnrollments: this.enrollments.filter(e => e.status === '已通过').length
+                };
+            },
+            
+            // 获取用户的报名记录
+            getUserEnrollments(userId) {
+                return this.enrollments.filter(e => e.userId === userId);
+            },
+            
+            // 获取用户的视频
+            getUserVideos(userId) {
+                return this.videos.filter(v => v.userId === userId);
+            },
+            
+            // 获取优秀视频
+            getExcellentVideos() {
+                return this.videos
+                    .filter(v => v.isExcellent || (v.status === '已评分' && v.score >= 85))
+                    .sort((a, b) => (b.score || 0) - (a.score || 0));
+            }
+        };
+
+        // ===================== 登录失败管理 =====================
+        const LoginManager = {
+            failedAttempts: {},
+            
+            recordFailedAttempt(username) {
+                if (!this.failedAttempts[username]) {
+                    this.failedAttempts[username] = [];
+                }
+                
+                this.failedAttempts[username].push(Date.now());
+                
+                // 只保留最近1小时的记录
+                const oneHourAgo = Date.now() - (60 * 60 * 1000);
+                this.failedAttempts[username] = this.failedAttempts[username].filter(
+                    time => time > oneHourAgo
+                );
+                
+                console.log(`用户 ${username} 登录失败，最近1小时失败次数: ${this.failedAttempts[username].length}`);
+            },
+            
+            getFailedCount(username) {
+                if (!this.failedAttempts[username]) return 0;
+                
+                const oneHourAgo = Date.now() - (60 * 60 * 1000);
+                return this.failedAttempts[username].filter(time => time > oneHourAgo).length;
+            },
+            
+            resetFailedAttempts(username) {
+                delete this.failedAttempts[username];
+            },
+            
+            isAccountLocked(username) {
+                const failedCount = this.getFailedCount(username);
+                return failedCount >= 5; // 5次失败后锁定
+            }
+        };
+
+        // ===================== 用户认证 =====================
+        let currentUser = null;
+
+        function login(username, password) {
+            console.log(`=== 开始登录流程 ===`);
+            console.log(`用户名: ${username}`);
+            
+            // 基础验证
+            if (!username || !password) {
+                showNotification('请输入用户名和密码', 'error');
+                return false;
+            }
+            
+            // 检查账户是否被锁定
+            if (LoginManager.isAccountLocked(username)) {
+                showNotification('账户已被锁定，请15分钟后再试', 'error');
+                return false;
+            }
+            
+            // 查找用户
+            const user = DataStore.findUser(username, password);
+            
+            if (user) {
+                // 登录成功
+                currentUser = user;
+                LoginManager.resetFailedAttempts(username);
+                updateUserInterface();
+                
+                showNotification(`欢迎回来，${user.username}！`, 'success');
+                console.log('登录成功');
+                
+                // 关闭登录模态框
+                const modal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+                if (modal) modal.hide();
+                
+                return true;
+            } else {
+                // 登录失败
+                LoginManager.recordFailedAttempt(username);
+                const failedCount = LoginManager.getFailedCount(username);
+                const remainingAttempts = Math.max(0, 5 - failedCount);
+                
+                let errorMessage = '用户名或密码错误';
+                if (failedCount >= 3) {
+                    errorMessage = `用户名或密码错误（${failedCount}/5）`;
+                    if (remainingAttempts > 0) {
+                        errorMessage += `，剩余尝试次数：${remainingAttempts}`;
+                    }
+                }
+                
+                showNotification(errorMessage, 'error');
+                
+                // 添加失败动画
+                const modalContent = document.querySelector('#loginModal .modal-content');
+                if (modalContent) {
+                    modalContent.classList.add('login-failed-shake');
+                    setTimeout(() => {
+                        modalContent.classList.remove('login-failed-shake');
+                    }, 500);
+                }
+                
+                // 更新失败次数显示
+                updateFailedAttemptsDisplay(username, failedCount);
+                
+                console.log('登录失败');
+                return false;
+            }
+        }
+
+        function register(username, email, password) {
+            // 验证输入
+            if (!username || username.length < 3) {
+                showNotification('用户名至少需要3个字符', 'error');
+                return false;
+            }
+            
+            if (!email || !email.includes('@')) {
+                showNotification('请输入有效的邮箱地址', 'error');
+                return false;
+            }
+            
+            if (!password || password.length < 6) {
+                showNotification('密码至少需要6个字符', 'error');
+                return false;
+            }
+            
+            // 检查用户是否已存在
+            const existingUser = DataStore.users.find(u => u.username === username);
+            if (existingUser) {
+                showNotification('用户名已被使用', 'error');
+                return false;
+            }
+            
+            // 创建新用户
+            const newUser = DataStore.addUser({
+                username: username,
+                password: password,
+                email: email
+            });
+            
+            currentUser = newUser;
+            updateUserInterface();
+            showNotification('注册成功！已自动登录', 'success');
+            
+            // 关闭注册模态框
+            const modal = bootstrap.Modal.getInstance(document.getElementById('registerModal'));
+            if (modal) modal.hide();
+            
+            return true;
+        }
+
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                currentUser = null;
+                updateUserInterface();
+                showNotification('已退出登录', 'success');
+                showPage('home');
+            }
+        }
+
+        function updateUserInterface() {
+            const userControls = document.getElementById('userControls');
+            const adminLink = document.getElementById('adminLink');
+            
+            if (currentUser) {
+                userControls.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <div class="user-avatar me-2" style="width: 40px; height: 40px; background: var(--primary-gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">
+                            ${currentUser.username.charAt(0).toUpperCase()}
+                        </div>
+                        <div class="me-3">
+                            <div class="fw-semibold">${currentUser.username}</div>
+                            <small class="text-muted">${currentUser.role}</small>
+                            ${currentUser.isAdmin ? '<span class="badge admin-badge ms-2">管理员</span>' : ''}
+                        </div>
+                        <button class="btn btn-outline-danger btn-sm" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </button>
+                    </div>
+                `;
+                
+                if (currentUser.isAdmin) {
+                    adminLink.style.display = 'block';
+                }
+            } else {
+                userControls.innerHTML = `
+                    <div id="authButtons">
+                        <button class="btn btn-outline-primary me-2" onclick="showLoginModal()">
+                            <i class="fas fa-sign-in-alt me-2"></i>登录
+                        </button>
+                        <button class="btn btn-primary" onclick="showRegisterModal()">
+                            <i class="fas fa-user-plus me-2"></i>注册
+                        </button>
+                    </div>
+                `;
+                adminLink.style.display = 'none';
+            }
+        }
+
+        function updateFailedAttemptsDisplay(username, failedCount) {
+            const modalTitle = document.querySelector('#loginModal .modal-title');
+            if (!modalTitle) return;
+            
+            // 移除旧的失败计数徽章
+            const oldBadge = modalTitle.querySelector('.login-attempts-badge');
+            if (oldBadge) oldBadge.remove();
+            
+            if (failedCount > 0) {
+                const badge = document.createElement('span');
+                badge.className = 'login-attempts-badge';
+                badge.textContent = failedCount;
+                modalTitle.appendChild(badge);
+            }
+        }
+
+        // ===================== 页面管理 =====================
+        function showPage(pageId) {
+            // 隐藏所有页面
+            const pages = ['home', 'enroll', 'upload', 'excellent', 'rank', 'personal', 'dashboard', 'admin'];
+            pages.forEach(id => {
+                const element = document.getElementById(id + 'Page');
+                if (element) {
+                    element.style.display = 'none';
+                }
+            });
+            
+            // 显示目标页面
+            const targetPage = document.getElementById(pageId + 'Page');
+            if (targetPage) {
+                targetPage.style.display = 'block';
+                window.location.hash = pageId;
+                
+                // 更新导航栏激活状态
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === '#' + pageId) {
+                        link.classList.add('active');
+                    }
+                });
+                
+                // 页面特定的初始化
+                switch(pageId) {
+                    case 'personal':
+                        loadPersonalPage();
+                        break;
+                    case 'dashboard':
+                        loadDashboardPage();
+                        break;
+                    case 'excellent':
+                        loadExcellentPage();
+                        break;
+                    case 'rank':
+                        loadRankPage();
+                        break;
+                    case 'admin':
+                        if (!currentUser || !currentUser.isAdmin) {
+                            showNotification('只有管理员可以访问此页面', 'error');
+                            showPage('home');
+                            return;
+                        }
+                        loadAdminPage();
+                        break;
+                }
+            }
+        }
+
+        // ===================== 页面内容 =====================
+        function initializePages() {
+            const pageWrapper = document.getElementById('pageWrapper');
+            
+            // 首页
+            pageWrapper.innerHTML += `
+                <div id="homePage" class="page-content" style="display: block;">
+                    <div class="container">
+                        <div class="row align-items-center py-5">
+                            <div class="col-lg-6">
+                                <h1 class="section-title">全国跳绳赛事平台</h1>
+                                <p class="hero-subtitle" style="font-size: 1.3rem; color: #666; max-width: 600px; margin-bottom: 40px;">
+                                    汇聚全国跳绳爱好者，展现精彩赛事瞬间，记录每一个灵动身影。
+                                </p>
+                                <div class="mt-4">
+                                    <button class="btn btn-primary btn-lg me-3 mb-3" onclick="showPage('enroll')">
+                                        <i class="fas fa-play-circle me-2"></i>立即参赛
+                                    </button>
+                                    <button class="btn btn-outline-primary btn-lg mb-3" onclick="showPage('dashboard')">
+                                        <i class="fas fa-chart-line me-2"></i>查看数据
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 text-center">
+                                <div class="hero-illustration" style="width: 350px; height: 350px; background: var(--primary-gradient); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 30px 60px rgba(102, 126, 234, 0.3);">
+                                    <i class="fas fa-dumbbell" style="font-size: 120px; color: white;"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row g-4 py-5">
+                            <div class="col-md-4">
+                                <div class="feature-card">
+                                    <div class="feature-icon">
+                                        <i class="fas fa-user-plus"></i>
+                                    </div>
+                                    <h4 class="feature-title">智能报名系统</h4>
+                                    <p class="text-muted">一键报名，智能审核，支持多项目同时报名</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="feature-card">
+                                    <div class="feature-icon">
+                                        <i class="fas fa-video"></i>
+                                    </div>
+                                    <h4 class="feature-title">视频智能评分</h4>
+                                    <p class="text-muted">AI辅助评分，多维度评价体系，公正公平</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="feature-card">
+                                    <div class="feature-icon">
+                                        <i class="fas fa-chart-network"></i>
+                                    </div>
+                                    <h4 class="feature-title">实时数据看板</h4>
+                                    <p class="text-muted">多维度数据分析，可视化图表展示</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // 参赛报名页面
+            pageWrapper.innerHTML += `
+                <div id="enrollPage" class="page-content" style="display: none;">
+                    <div class="container py-5">
+                        <h1 class="section-title text-center mb-1">参赛报名</h1>
+                        <p class="section-subtitle text-center" style="color: #666; font-size: 1.2rem; margin-bottom: 40px;">填写报名信息，参与精彩赛事</p>
+                        
+                        <div class="row justify-content-center">
+                            <div class="col-lg-8">
+                                <div class="glass-card">
+                                    <form id="enrollmentForm" onsubmit="handleEnrollment(event)">
+                                        <div class="mb-4">
+                                            <h5 class="mb-3"><i class="fas fa-user me-2"></i>基本信息</h5>
+                                            <div class="row g-3">
+                                                <div class="col-md-6">
+                                                    <label class="form-label">姓名 *</label>
+                                                    <input type="text" class="form-control" name="name" required>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">性别 *</label>
+                                                    <select class="form-select" name="gender" required>
+                                                        <option value="">请选择</option>
+                                                        <option value="男">男</option>
+                                                        <option value="女">女</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">出生日期 *</label>
+                                                    <input type="date" class="form-control" name="birthdate" required>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">身份证号 *</label>
+                                                    <input type="text" class="form-control" name="idCard" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mb-4">
+                                            <h5 class="mb-3"><i class="fas fa-phone me-2"></i>联系方式</h5>
+                                            <div class="row g-3">
+                                                <div class="col-md-6">
+                                                    <label class="form-label">手机号码 *</label>
+                                                    <input type="tel" class="form-control" name="phone" required>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">电子邮箱</label>
+                                                    <input type="email" class="form-control" name="email">
+                                                </div>
+                                                <div class="col-12">
+                                                    <label class="form-label">所在省市 *</label>
+                                                    <select class="form-select" name="province" required>
+                                                        <option value="">请选择</option>
+                                                        <option value="北京">北京</option>
+                                                        <option value="上海">上海</option>
+                                                        <option value="广东">广东</option>
+                                                        <option value="浙江">浙江</option>
+                                                        <option value="江苏">江苏</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mb-4">
+                                            <h5 class="mb-3"><i class="fas fa-running me-2"></i>赛事信息</h5>
+                                            <div class="row g-3">
+                                                <div class="col-md-6">
+                                                    <label class="form-label">参赛项目 *</label>
+                                                    <select class="form-select" name="project" required>
+                                                        <option value="">请选择</option>
+                                                        <option value="30秒单摇">30秒单摇</option>
+                                                        <option value="60秒单摇">60秒单摇</option>
+                                                        <option value="30秒双摇">30秒双摇</option>
+                                                        <option value="花样跳绳">花样跳绳</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">组别 *</label>
+                                                    <select class="form-select" name="group" required>
+                                                        <option value="">请选择</option>
+                                                        <option value="儿童组">儿童组（6-12岁）</option>
+                                                        <option value="青少年组">青少年组（13-18岁）</option>
+                                                        <option value="成人组">成人组（19-40岁）</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="d-grid gap-2 mt-4">
+                                            <button type="submit" class="btn btn-primary btn-lg">
+                                                <i class="fas fa-paper-plane me-2"></i>提交报名
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // 视频上传页面
+            pageWrapper.innerHTML += `
+                <div id="uploadPage" class="page-content" style="display: none;">
+                    <div class="container py-5">
+                        <h1 class="section-title text-center mb-1">视频上传</h1>
+                        <p class="section-subtitle text-center" style="color: #666; font-size: 1.2rem; margin-bottom: 40px;">上传您的参赛视频，获取专业评分</p>
+                        
+                        <div class="row justify-content-center">
+                            <div class="col-lg-8">
+                                <div class="glass-card">
+                                    <div class="text-center">
+                                        <i class="fas fa-video fa-4x text-primary mb-3"></i>
+                                        <h4>视频上传功能</h4>
+                                        <p class="text-muted">此功能需要登录后使用</p>
+                                        ${!currentUser ? `
+                                            <button class="btn btn-primary mt-3" onclick="showLoginModal()">
+                                                <i class="fas fa-sign-in-alt me-2"></i>立即登录
+                                            </button>
+                                        ` : `
+                                            <form id="videoUploadForm" onsubmit="handleVideoUpload(event)" class="mt-4">
+                                                <div class="mb-3">
+                                                    <label class="form-label">视频标题</label>
+                                                    <input type="text" class="form-control" placeholder="请输入视频标题" required>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">视频文件</label>
+                                                    <input type="file" class="form-control" accept="video/*" required>
+                                                </div>
+                                                <button type="submit" class="btn btn-primary w-100">
+                                                    <i class="fas fa-upload me-2"></i>上传视频
+                                                </button>
+                                            </form>
+                                        `}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // 优秀展示页面
+            pageWrapper.innerHTML += `
+                <div id="excellentPage" class="page-content" style="display: none;">
+                    <div class="container py-5">
+                        <h1 class="section-title text-center mb-1">优秀展示</h1>
+                        <p class="section-subtitle text-center" style="color: #666; font-size: 1.2rem; margin-bottom: 40px;">欣赏优秀选手的精彩表现</p>
+                        
+                        <div class="row" id="excellentVideos">
+                            <!-- 视频将通过JavaScript动态加载 -->
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // 积分榜页面
+            pageWrapper.innerHTML += `
+                <div id="rankPage" class="page-content" style="display: none;">
+                    <div class="container py-5">
+                        <h1 class="section-title text-center mb-1">积分榜</h1>
+                        <p class="section-subtitle text-center" style="color: #666; font-size: 1.2rem; margin-bottom: 40px;">查看全国及各省市排名</p>
+                        
+                        <div class="glass-card">
+                            <div class="table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>排名</th>
+                                            <th>姓名</th>
+                                            <th>地区</th>
+                                            <th>分数</th>
+                                            <th>参赛次数</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="rankingsTable">
+                                        <!-- 排名数据将通过JavaScript动态加载 -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // 个人平台页面
+            pageWrapper.innerHTML += `
+                <div id="personalPage" class="page-content" style="display: none;">
+                    <div class="container py-5">
+                        <h1 class="section-title text-center mb-1">个人平台</h1>
+                        <p class="section-subtitle text-center" style="color: #666; font-size: 1.2rem; margin-bottom: 40px;">管理您的个人信息和参赛记录</p>
+                        
+                        <div class="row" id="personalContent">
+                            <!-- 内容将通过JavaScript动态加载 -->
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // 数据看板页面
+            pageWrapper.innerHTML += `
+                <div id="dashboardPage" class="page-content" style="display: none;">
+                    <div class="container py-5">
+                        <h1 class="section-title text-center mb-1">数据看板</h1>
+                        <p class="section-subtitle text-center" style="color: #666; font-size: 1.2rem; margin-bottom: 40px;">平台数据统计与分析</p>
+                        
+                        <div class="row g-4 mb-4" id="statsCards">
+                            <!-- 统计卡片将通过JavaScript动态加载 -->
+                        </div>
+                        
+                        <div class="row g-4">
+                            <div class="col-lg-6">
+                                <div class="glass-card">
+                                    <h5><i class="fas fa-chart-bar me-2"></i>报名统计</h5>
+                                    <div id="enrollmentChart" style="height: 300px; display: flex; align-items: center; justify-content: center;">
+                                        <div class="text-center">
+                                            <i class="fas fa-chart-bar fa-3x text-muted mb-3"></i>
+                                            <p>数据图表区域</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="glass-card">
+                                    <h5><i class="fas fa-map me-2"></i>地区分布</h5>
+                                    <div id="regionChart" style="height: 300px; display: flex; align-items: center; justify-content: center;">
+                                        <div class="text-center">
+                                            <i class="fas fa-map-marked-alt fa-3x text-muted mb-3"></i>
+                                            <p>地区分布图表</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // 管理员页面
+            pageWrapper.innerHTML += `
+                <div id="adminPage" class="page-content" style="display: none;">
+                    <div class="container py-5">
+                        <h1 class="section-title text-center mb-1">管理员面板</h1>
+                        <p class="section-subtitle text-center" style="color: #666; font-size: 1.2rem; margin-bottom: 40px;">系统管理和数据维护</p>
+                        
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <div class="glass-card">
+                                    <h4 class="mb-4"><i class="fas fa-cog me-2"></i>系统管理</h4>
+                                    <div class="row g-3">
+                                        <div class="col-md-4">
+                                            <button class="btn btn-danger w-100" onclick="resetSystemData()">
+                                                <i class="fas fa-redo me-2"></i>重置数据
+                                            </button>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <button class="btn btn-warning w-100" onclick="exportData()">
+                                                <i class="fas fa-download me-2"></i>导出数据
+                                            </button>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <button class="btn btn-success w-100" onclick="showImportModal()">
+                                                <i class="fas fa-upload me-2"></i>导入数据
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row g-4">
+                            <div class="col-lg-6">
+                                <div class="glass-card">
+                                    <h5 class="mb-3"><i class="fas fa-users me-2"></i>用户管理</h5>
+                                    <div class="table-responsive">
+                                        <table class="data-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>用户名</th>
+                                                    <th>邮箱</th>
+                                                    <th>角色</th>
+                                                    <th>注册时间</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="adminUsersTable">
+                                                <!-- 用户数据将通过JavaScript动态加载 -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="glass-card">
+                                    <h5 class="mb-3"><i class="fas fa-file-signature me-2"></i>报名管理</h5>
+                                    <div class="table-responsive">
+                                        <table class="data-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>姓名</th>
+                                                    <th>项目</th>
+                                                    <th>状态</th>
+                                                    <th>操作</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="adminEnrollmentsTable">
+                                                <!-- 报名数据将通过JavaScript动态加载 -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 新增的优秀视频和积分排名管理 -->
+                        <div class="row g-4 mt-4">
+                            <div class="col-lg-6">
+                                <div class="glass-card">
+                                    <h5 class="mb-3"><i class="fas fa-star me-2"></i>优秀视频管理</h5>
+                                    <div class="mb-3">
+                                        <button class="btn btn-primary mb-3" onclick="showUploadExcellentVideoModal()">
+                                            <i class="fas fa-plus me-2"></i>上传优秀视频
+                                        </button>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="data-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>视频标题</th>
+                                                    <th>上传者</th>
+                                                    <th>评分</th>
+                                                    <th>状态</th>
+                                                    <th>操作</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="excellentVideosTable">
+                                                <!-- 视频数据动态加载 -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-lg-6">
+                                <div class="glass-card">
+                                    <h5 class="mb-3"><i class="fas fa-trophy me-2"></i>积分排名管理</h5>
+                                    <div class="mb-3">
+                                        <button class="btn btn-success mb-3" onclick="showEditRankingModal()">
+                                            <i class="fas fa-edit me-2"></i>手动调整排名
+                                        </button>
+                                        <button class="btn btn-info mb-3 ms-2" onclick="autoCalculateRankings()">
+                                            <i class="fas fa-calculator me-2"></i>自动计算排名
+                                        </button>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="data-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>排名</th>
+                                                    <th>姓名</th>
+                                                    <th>地区</th>
+                                                    <th>分数</th>
+                                                    <th>操作</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="rankingsManagementTable">
+                                                <!-- 排名数据动态加载 -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // 页脚
+            pageWrapper.innerHTML += `
+                <footer>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-4 mb-4">
+                                <h4 class="mb-3"><i class="fas fa-dumbbell me-2"></i>跳绳赛事平台</h4>
+                                <p class="mb-4">致力于推广跳绳运动，提供专业的赛事管理服务。</p>
+                            </div>
+                            <div class="col-lg-4 mb-4">
+                                <h5 class="mb-3">快速链接</h5>
+                                <ul class="list-unstyled">
+                                    <li class="mb-2"><a href="#home" class="text-white-50 text-decoration-none">首页</a></li>
+                                    <li class="mb-2"><a href="#enroll" class="text-white-50 text-decoration-none">参赛报名</a></li>
+                                    <li class="mb-2"><a href="#rank" class="text-white-50 text-decoration-none">积分榜</a></li>
+                                </ul>
+                            </div>
+                            <div class="col-lg-4 mb-4">
+                                <h5 class="mb-3">联系我们</h5>
+                                <ul class="list-unstyled">
+                                    <li class="mb-2"><i class="fas fa-phone me-2"></i>400-123-4567</li>
+                                    <li class="mb-2"><i class="fas fa-envelope me-2"></i>support@ropeskips.com</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="text-center pt-4 border-top border-white-10">
+                            <p class="mb-0">© 2026 全国跳绳赛事平台 版权所有</p>
+                        </div>
+                    </div>
+                </footer>
+            `;
+        }
+
+        // ===================== 页面加载函数 =====================
+        function loadPersonalPage() {
+            const container = document.getElementById('personalContent');
+            if (!container) return;
+            
+            if (!currentUser) {
+                container.innerHTML = `
+                    <div class="col-12">
+                        <div class="glass-card text-center">
+                            <i class="fas fa-user-lock fa-4x text-muted mb-3"></i>
+                            <h4>请先登录</h4>
+                            <p class="text-muted">登录后查看个人平台</p>
+                            <button class="btn btn-primary mt-3" onclick="showLoginModal()">登录</button>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            const enrollments = DataStore.getUserEnrollments(currentUser.id);
+            const videos = DataStore.getUserVideos(currentUser.id);
+            
+            container.innerHTML = `
+                <div class="col-lg-4">
+                    <div class="glass-card">
+                        <div class="text-center mb-4">
+                            <div class="user-avatar mx-auto mb-3" style="width: 100px; height: 100px; background: var(--primary-gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 40px; font-weight: 700;">
+                                ${currentUser.username.charAt(0).toUpperCase()}
+                            </div>
+                            <h4>${currentUser.username}</h4>
+                            <p class="text-muted">${currentUser.role}</p>
+                            <p class="mb-1"><small>邮箱：${currentUser.email}</small></p>
+                            <p><small>注册时间：${new Date(currentUser.registeredAt).toLocaleDateString()}</small></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-8">
+                    <div class="glass-card mb-4">
+                        <h5><i class="fas fa-file-signature me-2"></i>我的报名记录</h5>
+                        ${enrollments.length === 0 ? `
+                            <div class="text-center py-4">
+                                <p class="text-muted">暂无报名记录</p>
+                                <button class="btn btn-primary" onclick="showPage('enroll')">立即报名</button>
+                            </div>
+                        ` : `
+                            <div class="table-responsive mt-3">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>项目</th>
+                                            <th>组别</th>
+                                            <th>报名时间</th>
+                                            <th>状态</th>
+                                            <th>分数</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${enrollments.map(e => `
+                                            <tr>
+                                                <td>${e.project}</td>
+                                                <td>${e.group}</td>
+                                                <td>${new Date(e.enrollmentTime).toLocaleDateString()}</td>
+                                                <td>
+                                                    <span class="badge ${e.status === '已通过' ? 'bg-success' : e.status === '审核中' ? 'bg-warning' : 'bg-secondary'}">
+                                                        ${e.status}
+                                                    </span>
+                                                </td>
+                                                <td>${e.score ? e.score.toFixed(1) : '--'}</td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        `}
+                    </div>
+                    
+                    <div class="glass-card">
+                        <h5><i class="fas fa-video me-2"></i>我的视频</h5>
+                        ${videos.length === 0 ? `
+                            <div class="text-center py-4">
+                                <p class="text-muted">暂无视频</p>
+                                <button class="btn btn-primary" onclick="showPage('upload')">上传视频</button>
+                            </div>
+                        ` : `
+                            <div class="row mt-3">
+                                ${videos.map(v => `
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card h-100">
+                                            <div class="card-body">
+                                                <h6 class="card-title">${v.title}</h6>
+                                                <p class="card-text small text-muted">${v.description}</p>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <span class="badge ${v.status === '已评分' ? 'bg-success' : 'bg-warning'}">
+                                                        ${v.status}
+                                                    </span>
+                                                    <span>${v.score ? v.score.toFixed(1) + '分' : '待评分'}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `}
+                    </div>
+                </div>
+            `;
+        }
+
+        function loadDashboardPage() {
+            const stats = DataStore.getStats();
+            const container = document.getElementById('statsCards');
+            
+            if (!container) return;
+            
+            container.innerHTML = `
+                <div class="col-md-3">
+                    <div class="glass-card text-center">
+                        <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                        <h3>${stats.totalUsers}</h3>
+                        <p class="text-muted mb-0">注册用户</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="glass-card text-center">
+                        <i class="fas fa-file-signature fa-3x text-success mb-3"></i>
+                        <h3>${stats.totalEnrollments}</h3>
+                        <p class="text-muted mb-0">报名总数</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="glass-card text-center">
+                        <i class="fas fa-video fa-3x text-info mb-3"></i>
+                        <h3>${stats.totalVideos}</h3>
+                        <p class="text-muted mb-0">视频上传</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="glass-card text-center">
+                        <i class="fas fa-check-circle fa-3x text-warning mb-3"></i>
+                        <h3>${stats.approvedEnrollments}</h3>
+                        <p class="text-muted mb-0">审核通过</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function loadExcellentPage() {
+            const videos = DataStore.videos
+                .filter(v => v.isExcellent || (v.status === '已评分' && v.score >= 85))
+                .sort((a, b) => b.score - a.score);
+            
+            const container = document.getElementById('excellentVideos');
+            
+            if (!container) return;
+            
+            if (videos.length === 0) {
+                container.innerHTML = `
+                    <div class="col-12">
+                        <div class="glass-card text-center">
+                            <i class="fas fa-video-slash fa-4x text-muted mb-3"></i>
+                            <h4>暂无优秀视频</h4>
+                            <p class="text-muted">管理员可以上传和标记优秀视频</p>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = videos.map(video => `
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 video-preview">
+                        <div class="position-relative">
+                            <img src="${video.thumbnailUrl || 'https://via.placeholder.com/300x200?text=Rope+Skip+Video'}" 
+                                 class="card-img-top video-thumbnail" 
+                                 alt="${video.title}">
+                            ${video.isExcellent ? '<span class="excellent-badge"><i class="fas fa-star me-1"></i>优秀视频</span>' : ''}
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">${video.title}</h5>
+                            <p class="card-text small text-muted">${video.description || '暂无描述'}</p>
+                            <div class="mb-3">
+                                <span class="badge bg-primary me-2">${video.score ? video.score.toFixed(1) + '分' : '待评分'}</span>
+                                ${video.project ? `<span class="badge bg-info">${video.project}</span>` : ''}
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="fas fa-user me-1"></i>${video.name}
+                                </small>
+                                <small class="text-muted">
+                                    <i class="fas fa-map-marker-alt me-1"></i>${video.region}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadRankPage() {
+            const container = document.getElementById('rankingsTable');
+            if (!container) return;
+            
+            container.innerHTML = DataStore.rankings.map(item => `
+                <tr>
+                    <td>
+                        <span class="badge ${item.rank <= 3 ? 'bg-warning' : 'bg-secondary'}">
+                            ${item.rank}
+                        </span>
+                    </td>
+                    <td>${item.name}</td>
+                    <td>${item.region}</td>
+                    <td>
+                        <span class="badge bg-success">
+                            ${item.score.toFixed(1)}
+                        </span>
+                    </td>
+                    <td>${item.events}</td>
+                </tr>
+            `).join('');
+        }
+
+        // ===================== 优秀视频管理 =====================
+        function showUploadExcellentVideoModal() {
+            const modalHTML = `
+                <div class="modal fade" id="uploadExcellentVideoModal" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content glass-card">
+                            <div class="modal-header border-0">
+                                <h5 class="modal-title">上传优秀视频</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="excellentVideoForm">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">视频标题 *</label>
+                                                <input type="text" class="form-control" name="title" required placeholder="请输入视频标题">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">选手姓名 *</label>
+                                                <input type="text" class="form-control" name="name" required placeholder="请输入选手姓名">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">所属地区 *</label>
+                                                <select class="form-select" name="region" required>
+                                                    <option value="">请选择地区</option>
+                                                    <option value="北京">北京</option>
+                                                    <option value="上海">上海</option>
+                                                    <option value="广东">广东</option>
+                                                    <option value="浙江">浙江</option>
+                                                    <option value="江苏">江苏</option>
+                                                    <option value="其他">其他</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">参赛项目</label>
+                                                <select class="form-select" name="project">
+                                                    <option value="">请选择项目</option>
+                                                    <option value="30秒单摇">30秒单摇</option>
+                                                    <option value="60秒单摇">60秒单摇</option>
+                                                    <option value="30秒双摇">30秒双摇</option>
+                                                    <option value="花样跳绳">花样跳绳</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">视频URL *</label>
+                                                <input type="url" class="form-control" name="videoUrl" required placeholder="请输入视频链接（如YouTube、Bilibili）">
+                                                <small class="form-text text-muted">支持 YouTube、腾讯视频、Bilibili 等平台</small>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">视频封面图URL</label>
+                                                <input type="url" class="form-control" name="thumbnailUrl" placeholder="请输入封面图链接（可选）">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">评分 *</label>
+                                                <input type="number" class="form-control" name="score" min="0" max="100" step="0.1" required placeholder="0-100分">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">视频描述</label>
+                                                <textarea class="form-control" name="description" rows="3" placeholder="请输入视频描述（可选）"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="checkbox" name="isExcellent" id="isExcellent" checked>
+                                        <label class="form-check-label" for="isExcellent">
+                                            标记为优秀视频（将在优秀展示页面显示）
+                                        </label>
+                                    </div>
+                                    <div class="d-grid mt-3">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-upload me-2"></i>上传优秀视频
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            createModal('uploadExcellentVideoModal', modalHTML, (e) => {
+                e.preventDefault();
+                handleUploadExcellentVideo(e);
+            });
+        }
+
+        function handleUploadExcellentVideo(event) {
+            event.preventDefault();
+            
+            if (!currentUser || !currentUser.isAdmin) {
+                showNotification('只有管理员可以上传优秀视频', 'error');
+                return;
+            }
+            
+            const formData = new FormData(event.target);
+            const videoData = {
+                id: Date.now(),
+                title: formData.get('title'),
+                name: formData.get('name'),
+                region: formData.get('region'),
+                project: formData.get('project') || '',
+                videoUrl: formData.get('videoUrl'),
+                thumbnailUrl: formData.get('thumbnailUrl') || 'https://via.placeholder.com/300x200?text=Rope+Skip+Video',
+                score: parseFloat(formData.get('score')),
+                description: formData.get('description') || '',
+                status: '已评分',
+                uploadTime: new Date().toISOString(),
+                isExcellent: formData.get('isExcellent') === 'on',
+                uploadedBy: currentUser.username,
+                views: 0,
+                likes: 0
+            };
+            
+            // 验证数据
+            if (!videoData.title || !videoData.name || !videoData.videoUrl || isNaN(videoData.score)) {
+                showNotification('请填写所有必填字段', 'error');
+                return;
+            }
+            
+            // 保存到数据存储
+            DataStore.videos.push(videoData);
+            DataStore.saveToLocalStorage();
+            
+            // 更新排名（如果分数较高）
+            updateRankingsFromVideo(videoData);
+            
+            // 关闭模态框
+            const modal = bootstrap.Modal.getInstance(document.getElementById('uploadExcellentVideoModal'));
+            if (modal) modal.hide();
+            
+            showNotification('优秀视频上传成功！', 'success');
+            
+            // 刷新管理员页面
+            loadAdminPage();
+            
+            // 刷新优秀展示页面
+            loadExcellentPage();
+        }
+
+        function loadExcellentVideosManagement() {
+            const container = document.getElementById('excellentVideosTable');
+            if (!container) return;
+            
+            // 获取所有优秀视频（评分状态为"已评分"且分数较高的视频）
+            const excellentVideos = DataStore.videos
+                .filter(v => v.status === '已评分' && v.score >= 80)
+                .sort((a, b) => b.score - a.score)
+                .slice(0, 50); // 只显示前50个
+            
+            container.innerHTML = excellentVideos.map((video, index) => `
+                <tr>
+                    <td>
+                        <strong>${video.title}</strong>
+                        ${video.isExcellent ? '<span class="badge bg-warning ms-2">优秀</span>' : ''}
+                    </td>
+                    <td>${video.name}</td>
+                    <td>
+                        <span class="badge bg-success">${video.score.toFixed(1)}分</span>
+                    </td>
+                    <td>
+                        <span class="badge ${video.status === '已评分' ? 'bg-success' : 'bg-warning'}">
+                            ${video.status}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-primary" onclick="promoteToExcellent(${video.id})" ${video.isExcellent ? 'disabled' : ''} title="标记为优秀">
+                                <i class="fas fa-star"></i>
+                            </button>
+                            <button class="btn btn-warning" onclick="editVideoScore(${video.id})" title="编辑分数">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-danger" onclick="deleteVideo(${video.id})" title="删除视频">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function promoteToExcellent(videoId) {
+            const video = DataStore.videos.find(v => v.id === videoId);
+            if (video) {
+                video.isExcellent = true;
+                video.promotedAt = new Date().toISOString();
+                DataStore.saveToLocalStorage();
+                showNotification('视频已标记为优秀！', 'success');
+                loadExcellentVideosManagement();
+            }
+        }
+
+        function editVideoScore(videoId) {
+            const video = DataStore.videos.find(v => v.id === videoId);
+            if (!video) return;
+            
+            const newScore = prompt(`修改视频评分 (${video.title})\n当前分数: ${video.score}`, video.score);
+            if (newScore !== null) {
+                const parsedScore = parseFloat(newScore);
+                if (!isNaN(parsedScore) && parsedScore >= 0 && parsedScore <= 100) {
+                    const oldScore = video.score;
+                    video.score = parsedScore;
+                    
+                    // 如果视频是优秀视频，更新相关排名
+                    if (video.isExcellent) {
+                        updateRankingScore(video.name, video.region, parsedScore);
+                    }
+                    
+                    DataStore.saveToLocalStorage();
+                    showNotification(`分数已从 ${oldScore.toFixed(1)} 更新为 ${parsedScore.toFixed(1)}`, 'success');
+                    loadExcellentVideosManagement();
+                    loadRankingsManagement();
+                } else {
+                    showNotification('请输入0-100之间的有效分数', 'error');
+                }
+            }
+        }
+
+        function deleteVideo(videoId) {
+            if (confirm('确定要删除这个视频吗？此操作不可恢复！')) {
+                const index = DataStore.videos.findIndex(v => v.id === videoId);
+                if (index !== -1) {
+                    DataStore.videos.splice(index, 1);
+                    DataStore.saveToLocalStorage();
+                    showNotification('视频已删除', 'success');
+                    loadExcellentVideosManagement();
+                }
+            }
+        }
+
+        // ===================== 积分排名管理 =====================
+        function showEditRankingModal() {
+            // 获取现有排名数据用于编辑
+            const rankingsHTML = DataStore.rankings.map(ranking => `
+                <tr>
+                    <td>${ranking.rank}</td>
+                    <td><input type="text" class="form-control form-control-sm" value="${ranking.name}" data-id="${ranking.id}"></td>
+                    <td><input type="text" class="form-control form-control-sm" value="${ranking.region}"></td>
+                    <td><input type="number" class="form-control form-control-sm" value="${ranking.score}" step="0.1"></td>
+                    <td>
+                        <button class="btn btn-sm btn-danger" onclick="this.parentElement.parentElement.remove()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+            
+            const modalHTML = `
+                <div class="modal fade" id="editRankingModal" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered modal-xl">
+                        <div class="modal-content glass-card">
+                            <div class="modal-header border-0">
+                                <h5 class="modal-title">手动调整排名</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    在此页面可以直接编辑排名数据，保存后系统会自动重新排序。
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>排名</th>
+                                                <th>姓名</th>
+                                                <th>地区</th>
+                                                <th>分数</th>
+                                                <th>操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="rankingEditTable">
+                                            ${rankingsHTML}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="d-flex justify-content-between mt-3">
+                                    <button class="btn btn-success" onclick="addNewRankingRow()">
+                                        <i class="fas fa-plus me-2"></i>添加新选手
+                                    </button>
+                                    <div>
+                                        <button class="btn btn-secondary me-2" onclick="cancelEditRankings()">取消</button>
+                                        <button class="btn btn-primary" onclick="saveRankings()">保存更改</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            createModal('editRankingModal', modalHTML);
+        }
+
+        function addNewRankingRow() {
+            const table = document.getElementById('rankingEditTable');
+            if (!table) return;
+            
+            const newRow = `
+                <tr>
+                    <td>${DataStore.rankings.length + 1}</td>
+                    <td><input type="text" class="form-control form-control-sm" placeholder="选手姓名"></td>
+                    <td><input type="text" class="form-control form-control-sm" placeholder="地区"></td>
+                    <td><input type="number" class="form-control form-control-sm" placeholder="分数" step="0.1"></td>
+                    <td>
+                        <button class="btn btn-sm btn-danger" onclick="this.parentElement.parentElement.remove()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+            
+            table.insertAdjacentHTML('beforeend', newRow);
+        }
+
+        function cancelEditRankings() {
+            const modal = bootstrap.Modal.getInstance(document.getElementById('editRankingModal'));
+            if (modal) modal.hide();
+        }
+
+        function saveRankings() {
+            const rows = document.querySelectorAll('#rankingEditTable tr');
+            const newRankings = [];
+            
+            rows.forEach((row, index) => {
+                const inputs = row.querySelectorAll('input');
+                if (inputs.length >= 3) {
+                    const name = inputs[0].value.trim();
+                    const region = inputs[1].value.trim();
+                    const score = parseFloat(inputs[2].value);
+                    
+                    if (name && region && !isNaN(score)) {
+                        newRankings.push({
+                            id: DataStore.rankings[index]?.id || Date.now() + index,
+                            rank: index + 1,
+                            name: name,
+                            region: region,
+                            score: score,
+                            events: DataStore.rankings[index]?.events || 1,
+                            lastUpdated: new Date().toISOString()
+                        });
+                    }
+                }
+            });
+            
+            if (newRankings.length > 0) {
+                DataStore.rankings = newRankings.sort((a, b) => b.score - a.score)
+                    .map((item, index) => ({ ...item, rank: index + 1 }));
+                DataStore.saveToLocalStorage();
+                
+                const modal = bootstrap.Modal.getInstance(document.getElementById('editRankingModal'));
+                if (modal) modal.hide();
+                
+                showNotification(`排名已更新，共${newRankings.length}位选手`, 'success');
+                loadRankingsManagement();
+                loadRankPage(); // 刷新公开的排名页面
+            } else {
+                showNotification('没有有效的数据可以保存', 'error');
+            }
+        }
+
+        function loadRankingsManagement() {
+            const container = document.getElementById('rankingsManagementTable');
+            if (!container) return;
+            
+            container.innerHTML = DataStore.rankings.map(ranking => `
+                <tr>
+                    <td>
+                        <span class="badge ${ranking.rank <= 3 ? 'bg-warning' : 'bg-secondary'}">
+                            ${ranking.rank}
+                        </span>
+                    </td>
+                    <td>${ranking.name}</td>
+                    <td>${ranking.region}</td>
+                    <td>
+                        <input type="number" 
+                               class="form-control form-control-sm d-inline-block ranking-score" 
+                               value="${ranking.score}"
+                               onchange="updateRankingScoreDirect('${ranking.id}', this.value)"
+                               step="0.1">
+                    </td>
+                    <td>
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-success" onclick="moveRankingUp('${ranking.id}')" ${ranking.rank === 1 ? 'disabled' : ''} title="上移">
+                                <i class="fas fa-arrow-up"></i>
+                            </button>
+                            <button class="btn btn-warning" onclick="moveRankingDown('${ranking.id}')" ${ranking.rank === DataStore.rankings.length ? 'disabled' : ''} title="下移">
+                                <i class="fas fa-arrow-down"></i>
+                            </button>
+                            <button class="btn btn-danger" onclick="removeFromRanking('${ranking.id}')" title="删除">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function updateRankingScoreDirect(rankingId, newScore) {
+            const parsedScore = parseFloat(newScore);
+            if (!isNaN(parsedScore)) {
+                const ranking = DataStore.rankings.find(r => r.id === rankingId);
+                if (ranking) {
+                    ranking.score = parsedScore;
+                    // 重新排序
+                    DataStore.rankings.sort((a, b) => b.score - a.score);
+                    DataStore.rankings.forEach((item, index) => item.rank = index + 1);
+                    DataStore.saveToLocalStorage();
+                    showNotification('分数已更新，排名已重新计算', 'success');
+                    loadRankingsManagement();
+                }
+            }
+        }
+
+        function moveRankingUp(rankingId) {
+            const index = DataStore.rankings.findIndex(r => r.id === rankingId);
+            if (index > 0) {
+                // 交换位置
+                [DataStore.rankings[index], DataStore.rankings[index - 1]] = 
+                [DataStore.rankings[index - 1], DataStore.rankings[index]];
+                
+                // 更新排名
+                DataStore.rankings.forEach((item, i) => item.rank = i + 1);
+                DataStore.saveToLocalStorage();
+                showNotification('排名已上移', 'success');
+                loadRankingsManagement();
+            }
+        }
+
+        function moveRankingDown(rankingId) {
+            const index = DataStore.rankings.findIndex(r => r.id === rankingId);
+            if (index < DataStore.rankings.length - 1) {
+                // 交换位置
+                [DataStore.rankings[index], DataStore.rankings[index + 1]] = 
+                [DataStore.rankings[index + 1], DataStore.rankings[index]];
+                
+                // 更新排名
+                DataStore.rankings.forEach((item, i) => item.rank = i + 1);
+                DataStore.saveToLocalStorage();
+                showNotification('排名已下移', 'success');
+                loadRankingsManagement();
+            }
+        }
+
+        function removeFromRanking(rankingId) {
+            if (confirm('确定要从排名中移除这位选手吗？')) {
+                const index = DataStore.rankings.findIndex(r => r.id === rankingId);
+                if (index !== -1) {
+                    DataStore.rankings.splice(index, 1);
+                    // 重新计算排名
+                    DataStore.rankings.forEach((item, i) => item.rank = i + 1);
+                    DataStore.saveToLocalStorage();
+                    showNotification('选手已从排名中移除', 'success');
+                    loadRankingsManagement();
+                }
+            }
+        }
+
+        function autoCalculateRankings() {
+            if (confirm('系统将根据所有选手的视频评分自动计算排名，确定要继续吗？')) {
+                showLoading(true, '正在计算排名...');
+                
+                setTimeout(() => {
+                    // 收集所有选手的分数
+                    const playerScores = {};
+                    
+                    DataStore.videos.forEach(video => {
+                        if (video.status === '已评分' && video.score > 0) {
+                            if (!playerScores[video.name]) {
+                                playerScores[video.name] = {
+                                    name: video.name,
+                                    region: video.region || '未知',
+                                    totalScore: 0,
+                                    count: 0
+                                };
+                            }
+                            playerScores[video.name].totalScore += video.score;
+                            playerScores[video.name].count += 1;
+                        }
+                    });
+                    
+                    // 计算平均分
+                    const players = Object.values(playerScores)
+                        .map(player => ({
+                            ...player,
+                            avgScore: player.totalScore / player.count
+                        }))
+                        .filter(player => player.avgScore >= 70) // 只保留70分以上的选手
+                        .sort((a, b) => b.avgScore - a.avgScore);
+                    
+                    // 生成新的排名
+                    DataStore.rankings = players.map((player, index) => ({
+                        id: Date.now() + index,
+                        rank: index + 1,
+                        name: player.name,
+                        region: player.region,
+                        score: parseFloat(player.avgScore.toFixed(1)),
+                        events: player.count,
+                        lastUpdated: new Date().toISOString()
+                    }));
+                    
+                    DataStore.saveToLocalStorage();
+                    showLoading(false);
+                    
+                    showNotification(`排名已自动计算完成，共${players.length}位选手上榜`, 'success');
+                    loadRankingsManagement();
+                }, 1000);
+            }
+        }
+
+        function updateRankingsFromVideo(videoData) {
+            // 检查是否需要更新排名
+            if (videoData.score >= 80) { // 80分以上可能影响排名
+                const existingRanking = DataStore.rankings.find(r => r.name === videoData.name);
+                
+                if (existingRanking) {
+                    // 更新现有选手分数（取较高分）
+                    if (videoData.score > existingRanking.score) {
+                        existingRanking.score = videoData.score;
+                        existingRanking.lastUpdated = new Date().toISOString();
+                        // 重新排序
+                        DataStore.rankings.sort((a, b) => b.score - a.score);
+                        DataStore.rankings.forEach((item, index) => item.rank = index + 1);
+                    }
+                } else {
+                    // 添加新选手
+                    const newRanking = {
+                        id: Date.now(),
+                        name: videoData.name,
+                        region: videoData.region,
+                        score: videoData.score,
+                        events: 1,
+                        lastUpdated: new Date().toISOString()
+                    };
+                    
+                    DataStore.rankings.push(newRanking);
+                    // 重新排序
+                    DataStore.rankings.sort((a, b) => b.score - a.score);
+                    DataStore.rankings.forEach((item, index) => item.rank = index + 1);
+                }
+                
+                DataStore.saveToLocalStorage();
+            }
+        }
+
+        function updateRankingScore(name, region, newScore) {
+            const ranking = DataStore.rankings.find(r => r.name === name && r.region === region);
+            if (ranking) {
+                ranking.score = newScore;
+                ranking.lastUpdated = new Date().toISOString();
+                // 重新排序
+                DataStore.rankings.sort((a, b) => b.score - a.score);
+                DataStore.rankings.forEach((item, index) => item.rank = index + 1);
+                DataStore.saveToLocalStorage();
+            }
+        }
+
+        function loadAdminPage() {
+            if (!currentUser || !currentUser.isAdmin) return;
+            
+            // 用户表格
+            const usersTable = document.getElementById('adminUsersTable');
+            if (usersTable) {
+                usersTable.innerHTML = DataStore.users.map(user => `
+                    <tr>
+                        <td>
+                            ${user.username}
+                            ${user.isAdmin ? '<span class="badge admin-badge ms-2">管理员</span>' : ''}
+                        </td>
+                        <td>${user.email}</td>
+                        <td>${user.role}</td>
+                        <td>${new Date(user.registeredAt).toLocaleDateString()}</td>
+                    </tr>
+                `).join('');
+            }
+            
+            // 报名表格
+            const enrollmentsTable = document.getElementById('adminEnrollmentsTable');
+            if (enrollmentsTable) {
+                enrollmentsTable.innerHTML = DataStore.enrollments.map(enrollment => `
+                    <tr>
+                        <td>${enrollment.name}</td>
+                        <td>${enrollment.project}</td>
+                        <td>
+                            <span class="badge ${enrollment.status === '已通过' ? 'bg-success' : enrollment.status === '审核中' ? 'bg-warning' : 'bg-secondary'}">
+                                ${enrollment.status}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-success" onclick="approveEnrollment(${enrollment.id})" ${enrollment.status === '已通过' ? 'disabled' : ''}>
+                                通过
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="rejectEnrollment(${enrollment.id})" ${enrollment.status === '已拒绝' ? 'disabled' : ''}>
+                                拒绝
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+            
+            // 添加这行到函数末尾
+            loadExcellentVideosManagement();
+            loadRankingsManagement();
+        }
+
+        // ===================== 表单处理函数 =====================
+        function handleEnrollment(event) {
+            event.preventDefault();
+            
+            if (!currentUser) {
+                showNotification('请先登录后再报名', 'error');
+                showLoginModal();
+                return;
+            }
+            
+            const formData = new FormData(event.target);
+            const enrollment = {
+                id: Date.now(),
+                userId: currentUser.id,
+                username: currentUser.username,
+                enrollmentTime: new Date().toISOString(),
+                status: '已报名'
+            };
+            
+            // 收集表单数据
+            for (let [key, value] of formData.entries()) {
+                enrollment[key] = value;
+            }
+            
+            // 保存数据
+            DataStore.enrollments.push(enrollment);
+            DataStore.saveToLocalStorage();
+            
+            showNotification('报名成功！审核进度将通过系统通知', 'success');
+            event.target.reset();
+        }
+
+        function handleVideoUpload(event) {
+            event.preventDefault();
+            showNotification('视频上传功能演示', 'info');
+        }
+
+        function approveEnrollment(id) {
+            const enrollment = DataStore.enrollments.find(e => e.id === id);
+            if (enrollment) {
+                enrollment.status = '已通过';
+                enrollment.score = Math.floor(Math.random() * 20) + 80; // 随机分数
+                DataStore.saveToLocalStorage();
+                showNotification('报名已通过', 'success');
+                loadAdminPage();
+            }
+        }
+
+        function rejectEnrollment(id) {
+            const enrollment = DataStore.enrollments.find(e => e.id === id);
+            if (enrollment) {
+                enrollment.status = '已拒绝';
+                DataStore.saveToLocalStorage();
+                showNotification('报名已拒绝', 'success');
+                loadAdminPage();
+            }
+        }
+
+        // ===================== 模态框函数 =====================
+        function showLoginModal() {
+            const modalHTML = `
+                <div class="modal fade" id="loginModal" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content glass-card">
+                            <div class="modal-header border-0">
+                                <h5 class="modal-title">用户登录</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="loginForm">
+                                    <div class="mb-3">
+                                        <label class="form-label">用户名</label>
+                                        <input type="text" class="form-control" name="username" required placeholder="输入用户名">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">密码</label>
+                                        <input type="password" class="form-control" name="password" required placeholder="输入密码">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary w-100">登录</button>
+                                </form>
+                                <div class="text-center mt-3">
+                                    <small class="text-muted">没有账号？ <a href="#" onclick="showRegisterModal()">立即注册</a></small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            createModal('loginModal', modalHTML, (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const username = formData.get('username');
+                const password = formData.get('password');
+                
+                if (login(username, password)) {
+                    showPage('home');
+                }
+            });
+        }
+
+        function showRegisterModal() {
+            const modalHTML = `
+                <div class="modal fade" id="registerModal" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content glass-card">
+                            <div class="modal-header border-0">
+                                <h5 class="modal-title">用户注册</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="registerForm">
+                                    <div class="mb-3">
+                                        <label class="form-label">用户名</label>
+                                        <input type="text" class="form-control" name="username" required minlength="3" maxlength="20" placeholder="3-20个字符">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">邮箱</label>
+                                        <input type="email" class="form-control" name="email" required placeholder="输入有效邮箱">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">密码</label>
+                                        <input type="password" class="form-control" name="password" required minlength="6" placeholder="至少6位字符">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary w-100">注册</button>
+                                </form>
+                                <div class="text-center mt-3">
+                                    <small class="text-muted">已有账号？ <a href="#" onclick="showLoginModal()">立即登录</a></small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            createModal('registerModal', modalHTML, (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const username = formData.get('username');
+                const email = formData.get('email');
+                const password = formData.get('password');
+                
+                if (register(username, email, password)) {
+                    showPage('personal');
+                }
+            });
+        }
+
+        function createModal(modalId, modalHTML, onSubmit = null) {
+            // 移除现有模态框
+            const existingModal = document.getElementById(modalId);
+            if (existingModal) existingModal.remove();
+            
+            // 添加新模态框
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            
+            // 显示模态框
+            const modal = new bootstrap.Modal(document.getElementById(modalId));
+            modal.show();
+            
+            // 绑定提交事件
+            if (onSubmit) {
+                const form = document.querySelector(`#${modalId} form`);
+                if (form) {
+                    form.addEventListener('submit', onSubmit);
+                }
+            }
+        }
+
+        // ===================== 管理员功能 =====================
+        function resetSystemData() {
+            if (confirm('确定要重置所有数据吗？这将清除所有用户数据（除了默认管理员账号）！')) {
+                // 重置数据
+                DataStore.enrollments = [];
+                DataStore.videos = [];
+                DataStore.rankings = [];
+                DataStore.generateSampleRankings(); // 重新生成示例排名
+                DataStore.saveToLocalStorage();
+                
+                showNotification('系统数据已重置', 'success');
+                loadAdminPage();
+                loadDashboardPage();
+            }
+        }
+
+        function exportData() {
+            const data = {
+                users: DataStore.users,
+                enrollments: DataStore.enrollments,
+                videos: DataStore.videos,
+                rankings: DataStore.rankings,
+                exportTime: new Date().toISOString()
+            };
+            
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `跳绳平台数据备份_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showNotification('数据导出成功', 'success');
+        }
+
+        function showImportModal() {
+            const modalHTML = `
+                <div class="modal fade" id="importModal" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content glass-card">
+                            <div class="modal-header border-0">
+                                <h5 class="modal-title">导入数据</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="alert alert-warning">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    警告：导入数据将覆盖现有数据！
+                                </div>
+                                <input type="file" id="importFile" class="form-control" accept=".json">
+                                <button class="btn btn-primary w-100 mt-3" onclick="importData()">导入</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            createModal('importModal', modalHTML);
+        }
+
+        function importData() {
+            const fileInput = document.getElementById('importFile');
+            if (!fileInput.files.length) {
+                showNotification('请选择要导入的文件', 'error');
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    // 验证数据格式
+                    if (!data.users || !data.enrollments) {
+                        throw new Error('数据格式不正确');
+                    }
+                    
+                    // 导入数据
+                    DataStore.users = data.users;
+                    DataStore.enrollments = data.enrollments;
+                    DataStore.videos = data.videos || [];
+                    DataStore.rankings = data.rankings || [];
+                    
+                    DataStore.saveToLocalStorage();
+                    
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('importModal'));
+                    if (modal) modal.hide();
+                    
+                    showNotification('数据导入成功', 'success');
+                    
+                    // 刷新页面
+                    if (currentUser && currentUser.isAdmin) {
+                        loadAdminPage();
+                    }
+                } catch (error) {
+                    showNotification('导入失败：' + error.message, 'error');
+                }
+            };
+            
+            reader.readAsText(file);
+        }
+
+        // ===================== 初始化 =====================
+        function init() {
+            console.log('=== 系统初始化开始 ===');
+            
+            // 初始化数据存储
+            DataStore.init();
+            
+            // 初始化页面
+            initializePages();
+            
+            // 初始化用户界面
+            updateUserInterface();
+            
+            // 监听hash变化
+            window.addEventListener('hashchange', function() {
+                const pageId = window.location.hash.substring(1) || 'home';
+                showPage(pageId);
+            });
+            
+            // 初始显示
+            const initialPage = window.location.hash.substring(1) || 'home';
+            showPage(initialPage);
+            
+            console.log('=== 系统初始化完成 ===');
+            console.log('默认管理员账号：admin / admin123');
+            
+            // 显示欢迎信息
+            setTimeout(() => {
+                showNotification('跳绳赛事平台已就绪！欢迎使用。', 'info');
+            }, 1000);
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
